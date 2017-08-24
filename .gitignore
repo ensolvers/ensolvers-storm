@@ -1,22 +1,31 @@
-# Compiled class file
+**/target
 *.class
+**/.settings
+**.classpath
+**.project
+**.DS_Store
+.metadata
+/.settings/
+*~
+**/bin
+/bin
+*.swp
+gnome-stop-build-and.run.sh
+pull.sh
+push.sh
+logs
+.idea/
+main.iml
+**/*.iml
 
-# Log file
-*.log
+cconfig/schema/markethero-db.sql
+config/scripts/db/dumps-*
+config/schema/markethero-db.sql
 
-# BlueJ files
-*.ctxt
+config/schema/markethero-db.sql
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+modules/markethero-ui/src/main/webapp/static/js/scriptsMH.js
+modules/markethero-ui/src/main/webapp/static/js/scriptsMH.min.js
+modules/markethero-dashboard-ui/src/main/webapp/static/js/scriptsMH.js
+modules/markethero-dashboard-ui/src/main/webapp/static/js/scriptsMH.min.js
 
-# Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
