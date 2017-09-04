@@ -1,6 +1,7 @@
 # This module provides utility functions for Apache Storm
 
-Period partitioner
+
+Period partitioner Utility
 
 Giving a list of messages containing date/time information in a Kafka topic, we would like to count the number of messages for a specific type of period: YEAR, MONTH, DAY, HOUR, MINUTE.
 
@@ -16,21 +17,25 @@ MINUTE - 2017-11-27 18:21 - Count 1
 To be able to run the out of the box solution you need to run the storm submitter:
 
 /opt/storm/bin/storm jar ./mh-storm.jar com.ensolvers.storm.GroupAndCountTopologyRunner \
+<customer-name> \
 <topology-name> \
 <zookeeper-urls> \
 <producer-url> \
 <read-topic> \
 <json-field> \
 <write-topic> \
-<local-remote-cluster>
+<local-remote-cluster> \
+<key-fields>
 
 For example:
 
 /opt/storm/bin/storm jar ./mh-storm.jar com.ensolvers.storm.GroupAndCountTopologyRunner \
+ampit \
 email-stats-topology \
 zk-1.prod.ensolvers.com:2181,zk-2.prod.ensolvers.com:2181,zk-3.prod.ensolvers.com:2181 \
 kafka-1.prod.ensolvers.com:9092 \
 email_sent_2 \
 sentDateTime \
 email_stats_2 \
-remote
+remote \
+@type mediaId

@@ -1,5 +1,7 @@
 package com.ensolvers.storm;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.storm.task.OutputCollector;
@@ -19,10 +21,14 @@ public class PeriodPartitioner implements IRichBolt {
   private static final long serialVersionUID = 1L;
 
   private OutputCollector collector;
-  private final String fieldName;
+  private final String periodFieldName;
+  private final String customerName;
+  private final List<String> keyFields;
 
-  public PeriodPartitioner(String fieldName) {
-    this.fieldName = fieldName;
+  public PeriodPartitioner(String periodFieldName, String customerName, List<String> keyFields) {
+    this.periodFieldName = periodFieldName;
+    this.customerName = customerName;
+    this.keyFields = keyFields;
   }
   
   @Override
@@ -39,8 +45,8 @@ public class PeriodPartitioner implements IRichBolt {
       
       String jsonAsString = input.getStringByField("str");
       JSONObject json = new JSONObject(jsonAsString);
-      if (json.has(this.fieldName)) {
-        long dtAsLong = json.getLong(this.fieldName);
+      if (json.has(this.periodFieldName)) {
+        long dtAsLong = json.getLong(this.periodFieldName);
         DateTime dt = new DateTime(dtAsLong);
         
         Integer year = dt.getYear();
@@ -50,11 +56,30 @@ public class PeriodPartitioner implements IRichBolt {
         Integer hour = dt.getHourOfDay();
         Integer minute = dt.getMinuteOfHour();
         
-        collector.emit(input, new Values("YEAR", year.toString(), "MH"));
-        collector.emit(input, new Values("MONTH", year + "-" + month, "MH"));
-        collector.emit(input, new Values("DAY", year + "-" + month + "-" + day, "MH"));
-        collector.emit(input, new Values("HOUR", year + "-" + month + "-" + day + "-" + hour, "MH"));
-        collector.emit(input, new Values("MINUTE", year + "-" + month + "-" + day + "-" + hour + "-" + minute, "MH"));
+        Values yearValues = new Values("YEAR", year.toString(), this.customerName);
+        Values monthValues = new Values("MONTH", year + "-" + month, this.customerName);
+        Values dayValues = new Values("DAY", year + "-" + month + "-" + day, this.customerName);
+        Values hourValues = new Values("HOUR", year + "-" + month + "-" + day + "-" + hour, this.customerName);
+        Values minuteValues = new Values("MINUTE", year + "-" + month + "-" + day + "-" + hour + "-" + minute, this.customerName);
+
+        //extract key values
+        List<Object> keyValues = new ArrayList<Object>();
+        for (String key : this.keyFields) {
+          Object value = json.get(key);
+          keyValues.add(value);
+        }
+        
+        yearValues.addAll(keyValues);
+        monthValues.addAll(keyValues);
+        dayValues.addAll(keyValues);
+        hourValues.addAll(keyValues);
+        minuteValues.addAll(keyValues);
+        
+        collector.emit(input, yearValues);
+        collector.emit(input, monthValues);
+        collector.emit(input, dayValues);
+        collector.emit(input, hourValues);
+        collector.emit(input, minuteValues);
       }
       
       collector.ack(input);
@@ -70,7 +95,13 @@ public class PeriodPartitioner implements IRichBolt {
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
-    declarer.declare(new Fields("period_type", "period_value", "customer"));
+    List<String> allFields = new ArrayList<String>();
+    allFields.add("period_type");
+    allFields.add("period_value");
+    allFields.add("customer");
+    allFields.addAll(this.keyFields);
+    
+    declarer.declare(new Fields(allFields));
   }
 
   @Override
