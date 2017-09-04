@@ -7,15 +7,16 @@ Giving a list of messages containing date/time information in a Kafka topic, we 
 
 For instance having one message in date 2017-11-27 18:20 and another message in 2017-11-27 18:21 the count will be:
 
-YEAR - 2017 - Count 2
-MONTH - 2017-11 - Count 2
-DAY - 2017-11-27 - Count 2
-HOUR - 2017-11-27 18 - Count 2
-MINUTE - 2017-11-27 18:20 - Count 1
-MINUTE - 2017-11-27 18:21 - Count 1
++ YEAR - 2017 - Count 2
++ MONTH - 2017-11 - Count 2
++ DAY - 2017-11-27 - Count 2
++ HOUR - 2017-11-27 18 - Count 2
++ MINUTE - 2017-11-27 18:20 - Count 1
++ MINUTE - 2017-11-27 18:21 - Count 1
 
 To be able to run the out of the box solution you need to run the storm submitter:
 
+```sh
 /opt/storm/bin/storm jar ./mh-storm.jar com.ensolvers.storm.GroupAndCountTopologyRunner \
 <customer-name> \
 <topology-name> \
@@ -26,9 +27,11 @@ To be able to run the out of the box solution you need to run the storm submitte
 <write-topic> \
 <local-remote-cluster> \
 <key-fields>
+```
 
 For example:
 
+```sh
 /opt/storm/bin/storm jar ./mh-storm.jar com.ensolvers.storm.GroupAndCountTopologyRunner \
 ampit \
 email-stats-topology \
@@ -39,3 +42,4 @@ sentDateTime \
 email_stats_2 \
 remote \
 @type mediaId
+```
