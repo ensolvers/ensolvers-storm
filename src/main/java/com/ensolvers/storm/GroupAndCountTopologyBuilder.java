@@ -38,7 +38,7 @@ public class GroupAndCountTopologyBuilder {
     
     builder.setSpout("messages", spout, 10);   
     builder.setBolt("partitioner", new PeriodPartitioner(dateField, customerName, keyFields), 100).shuffleGrouping("messages");
-    builder.setBolt("count", new PeriodCounter(writeTopic, producers), 100).fieldsGrouping("partitioner", new Fields(groupingFields));
+    builder.setBolt("count", new PeriodCounter(writeTopic, producers, keyFields), 100).fieldsGrouping("partitioner", new Fields(groupingFields));
 
     return builder.createTopology();
   }
